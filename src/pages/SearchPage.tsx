@@ -70,16 +70,16 @@ export default function SearchPage() {
   }
 
   async function handleAiSearch(prompt: string) {
-    const { queryText: aiQuery, filters: aiFilters } = parseAiPrompt(prompt)
-    setQueryText(aiQuery)
     setSearching(true)
     setSearchError('')
     if (userId) addSearchHistory(userId, prompt).catch(() => {})
     try {
+      const { queryText: aiQuery, filters: aiFilters } = await parseAiPrompt(prompt)
+      setQueryText(aiQuery)
       setResults(await runSearch(aiQuery))
       setFilters({ ...emptyFilters, ...aiFilters })
     } catch (err) {
-      setSearchError(getErrorMessage(err, '検索に失敗しました'))
+      setSearchError(getErrorMessage(err, 'AI検索に失敗しました'))
     } finally {
       setSearching(false)
     }
@@ -105,7 +105,7 @@ export default function SearchPage() {
       </header>
 
       <section className="section">
-        <AiSearchBox onSubmit={handleAiSearch} />
+        <AiSearchBox onSubmit={handleAiSearch} loading={searching} />
       </section>
 
       <div className="search-toolbar">
