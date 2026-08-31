@@ -1,17 +1,16 @@
 // ==========================================================================
-// AI関連機能のモック実装。
+// AI関連機能。
 //
-// 機能要件の「1.2 AIによる検索補正」「1.3 AI検索」「3. 待ち時間予測機能」
-// 「5. おすすめ検索機能」に対応する関数を、実際のLLM/予測APIを呼ばずに
-// 説明可能なヒューリスティックで実装している。
-//
-// 将来Supabase Edge Functions等から本物のAIモデルを呼び出す場合は、
-// この関数のシグネチャ（引数・戻り値）を変えずに中身だけ差し替えれば、
-// 呼び出し側（services/searchService.ts, pages/*）は変更不要になる想定。
+// 「1.3 AI検索」は src/services/claudeService.ts（Claude Agent SDK経由）を使って
+// 実際にClaudeへ問い合わせる。それ以外（「1.2 AIによる検索補正」「3. 待ち時間予測機能」
+// 「5. おすすめ検索機能」）は、実際のLLM/予測APIを呼ばずに説明可能なヒューリスティックで
+// 実装している（将来置き換える場合も、関数のシグネチャを変えずに中身だけ差し替えれば、
+// 呼び出し側は変更不要になる想定）。
 // ==========================================================================
 
 import type { SearchFilters, SearchHistoryItem, Store, Visit } from '../types'
 import { GENRE_LIST } from '../data/genres'
+import { askClaude } from './claudeService'
 
 /** 表記ゆれ辞書。ひらがな/カタカナ・送り仮名の揺れを簡易的に吸収する。 */
 const SYNONYMS: Array<[RegExp, string]> = [
@@ -41,39 +40,79 @@ export function correctQuery(rawText: string): string {
   return text
 }
 
-const CHEAP_HINTS = ['安い', 'リーズナブル', '節約', 'プチプラ']
-const OPEN_NOW_HINTS = ['今すぐ', '今開いてる', '営業中', 'いま']
-
 export interface AiPromptResult {
   queryText: string
   filters: Partial<SearchFilters>
 }
 
-/** 1.3 AI検索: 自然言語プロンプトから検索文字列とフィルタ条件を生成する */
-export function parseAiPrompt(prompt: string): AiPromptResult {
-  const normalized = correctQuery(prompt)
-  const matchedGenres = GENRE_LIST.filter((genre) => normalized.includes(genre))
-  const priceMax = CHEAP_HINTS.some((hint) => normalized.includes(hint)) ? 1500 : null
-  const openNow = OPEN_NOW_HINTS.some((hint) => normalized.includes(hint))
+function buildAiSearchPrompt(prompt: string): string {
+  return [
+    'あなたは飲食店検索アプリの検索アシスタントです。',
+    'ユーザーの入力から、店舗検索に使う「検索文字列」と「フィルタ条件」をJSON形式で抽出してください。',
+    '',
+    `利用可能なジャンル: ${GENRE_LIST.join(', ')}`,
+    '',
+    '出力は必ず次の形式のJSONオブジェクトのみを返してください。',
+    '説明文や前置き、Markdownのコードブロック記法（```）は一切付けないこと。',
+    '{',
+    '  "queryText": "検索に使う短い文字列（店名・料理名など）。無ければ空文字列",',
+    '  "genres": ["該当するジャンルの配列。上記リストに含まれるものだけを使うこと。無ければ空配列"],',
+    '  "priceMax": 予算の上限を表す数値（円）。指定が無ければnull,',
+    '  "openNow": 「今すぐ入れる」「営業中」等、今すぐ入店したい意図があればtrue、無ければfalse',
+    '}',
+    '',
+    `ユーザーの入力: "${prompt}"`,
+  ].join('\n')
+}
 
-  // プロンプトから抽出済みのキーワードを取り除いた残りを検索文字列として扱う。
-  // 何も残らない場合はジャンル名、それも無ければプロンプト全体を使う。
-  let remainder = normalized
-  for (const genre of matchedGenres) remainder = remainder.split(genre).join('')
-  for (const hint of [...CHEAP_HINTS, ...OPEN_NOW_HINTS]) {
-    remainder = remainder.split(hint).join('')
-  }
-  remainder = remainder.trim()
+interface RawAiSearchResponse {
+  queryText?: unknown
+  genres?: unknown
+  priceMax?: unknown
+  openNow?: unknown
+}
 
-  const queryText = remainder || matchedGenres[0] || normalized
+/** Claudeの応答テキストからJSON部分を取り出してパースする（```json ... ```で囲まれて返る場合に備える） */
+function parseAiSearchResponse(text: string): AiPromptResult {
+  const stripped = text
+    .trim()
+    .replace(/^```(?:json)?\s*/i, '')
+    .replace(/```\s*$/i, '')
+    .trim()
+
+  const raw = JSON.parse(stripped) as RawAiSearchResponse
+  const knownGenres: readonly string[] = GENRE_LIST
+
+  const genres = Array.isArray(raw.genres)
+    ? raw.genres.filter((g): g is string => typeof g === 'string' && knownGenres.includes(g))
+    : []
+  const priceMax =
+    typeof raw.priceMax === 'number' && Number.isFinite(raw.priceMax) ? raw.priceMax : null
+  const openNow = raw.openNow === true
+  const rawQueryText = typeof raw.queryText === 'string' ? raw.queryText.trim() : ''
+  const queryText = rawQueryText || genres[0] || ''
 
   return {
     queryText,
     filters: {
-      ...(matchedGenres.length > 0 ? { genres: matchedGenres } : {}),
+      ...(genres.length > 0 ? { genres } : {}),
       ...(priceMax !== null ? { priceMax } : {}),
       ...(openNow ? { openNow: true } : {}),
     },
+  }
+}
+
+/**
+ * 1.3 AI検索: 自然言語プロンプトから検索文字列とフィルタ条件を生成する。
+ * Claude Agent SDK（src/services/claudeService.ts、ローカルのclaude-server経由）に問い合わせる。
+ * `npm run claude-server` が起動していない場合はエラーを投げるので、呼び出し元で表示すること。
+ */
+export async function parseAiPrompt(prompt: string): Promise<AiPromptResult> {
+  const response = await askClaude(buildAiSearchPrompt(prompt))
+  try {
+    return parseAiSearchResponse(response)
+  } catch {
+    throw new Error('Claudeの応答を解析できませんでした')
   }
 }
 
