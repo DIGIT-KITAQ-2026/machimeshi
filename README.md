@@ -1,4 +1,4 @@
-# まちめし（machimeshi）
+# マチめし（machimeshi）
 
 飲食店の空き状況・待ち時間を検索できるWebアプリ。React + Vite（フロントエンド）+ Supabase（DB・認証・ストレージ）+ Claude Agent SDK（AI検索）で構成されています。
 
