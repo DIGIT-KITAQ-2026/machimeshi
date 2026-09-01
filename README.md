@@ -24,7 +24,7 @@ npm install
 このプロジェクトは既存のSupabaseプロジェクトに接続して動作します。
 **[supabase/README.md](supabase/README.md)** の「複数人で開発する場合」を参照し、
 
-1. プロジェクトオーナーにSupabaseのチームへ招待してもらう
+1. プロジェクトオーナー(濱田)にSupabaseのチームへ招待してもらう
 2. 招待先のプロジェクトの **Settings > API** から自分でURL・anon keyを取得する
 3. `.env` を作成して値を設定する
 
@@ -92,3 +92,5 @@ supabase/       DBスキーマ（SQL）・セットアップ手順
 - `main`が常に動く状態を保つ
 - 新しい機能・修正ごとに`main`から`feature/xxx`ブランチを切って作業する
 - 完了したら`main`にマージし、マージ後はブランチを削除する（GitHub上でもPull Requestを作ってレビューを挟む運用に変えても構いません）
+
+不明点等あれば濱田に連絡してください。
