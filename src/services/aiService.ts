@@ -1,43 +1,50 @@
 // ==========================================================================
 // AI関連機能。
 //
-// 「1.3 AI検索」は src/services/claudeService.ts（Claude Agent SDK経由）を使って
-// 実際にClaudeへ問い合わせる。それ以外（「1.2 AIによる検索補正」「3. 待ち時間予測機能」
-// 「5. おすすめ検索機能」）は、実際のLLM/予測APIを呼ばずに説明可能なヒューリスティックで
-// 実装している（将来置き換える場合も、関数のシグネチャを変えずに中身だけ差し替えれば、
-// 呼び出し側は変更不要になる想定）。
+// 「1.2 AIによる検索補正」「1.3 AI検索」は src/services/claudeService.ts
+// （Claude Agent SDK経由）を使って実際にClaudeへ問い合わせる。
+// それ以外（「3. 待ち時間予測機能」「5. おすすめ検索機能」）は、実際のLLM/予測APIを
+// 呼ばずに説明可能なヒューリスティックで実装している（将来置き換える場合も、
+// 関数のシグネチャを変えずに中身だけ差し替えれば、呼び出し側は変更不要になる想定）。
 // ==========================================================================
 
 import type { SearchFilters, SearchHistoryItem, Store, Visit } from '../types'
 import { GENRE_LIST } from '../data/genres'
 import { askClaude } from './claudeService'
 
-/** 表記ゆれ辞書。ひらがな/カタカナ・送り仮名の揺れを簡易的に吸収する。 */
-const SYNONYMS: Array<[RegExp, string]> = [
-  [/らーめん|らあめん/g, 'ラーメン'],
-  [/かふぇ/g, 'カフェ'],
-  [/やきにく/g, '焼肉'],
-  [/すし|おすし/g, '寿司'],
-  [/かれー/g, 'カレー'],
-  [/ちゅうか/g, '中華'],
-  [/いざかや/g, '居酒屋'],
-  [/ていしょく/g, '定食'],
-  [/ぱん屋|パン屋/g, 'パン・スイーツ'],
-]
-
-function toHalfWidth(text: string): string {
-  return text.replace(/[Ａ-Ｚａ-ｚ０-９]/g, (ch) =>
-    String.fromCharCode(ch.charCodeAt(0) - 0xfee0),
-  )
+function buildCorrectQueryPrompt(rawText: string): string {
+  return [
+    'あなたは飲食店検索アプリの検索キーワード補正アシスタントです。',
+    'ユーザーが入力した検索文字列を、店舗の絞り込み検索に使える短いキーワードへ補正してください。',
+    '',
+    `候補となるジャンル: ${GENRE_LIST.join(', ')}`,
+    '',
+    '補正のルール:',
+    '- 入力が上記ジャンルや料理名と意味的に同じ・近い場合は、完全一致でなくても',
+    '  該当するジャンル名そのものに統一する（例:「めん類」「ラーメンとか」→「ラーメン」）',
+    '- ひらがな/カタカナ・全角/半角・送り仮名の表記ゆれを吸収する',
+    '- 店舗名らしき固有名詞や、ジャンルに当てはまらない語句はそのまま活かす',
+    '- 意味を変えるような情報の追加・削除はしない',
+    '',
+    '出力は補正後のキーワードのみを1行で返してください。',
+    '説明・引用符・句読点・Markdown記法は一切付けないこと。',
+    '',
+    `入力: "${rawText}"`,
+  ].join('\n')
 }
 
-/** 1.2 AIによる検索補正: 表記ゆれ・余分な空白を補正して検索精度を上げる */
-export function correctQuery(rawText: string): string {
-  let text = toHalfWidth(rawText.trim()).replace(/\s+/g, ' ')
-  for (const [pattern, replacement] of SYNONYMS) {
-    text = text.replace(pattern, replacement)
-  }
-  return text
+/**
+ * 1.2 AIによる検索補正: 完全一致の文字列ではなく、意味が近い表現でも
+ * 検索にヒットするよう、入力文字列をAI（Claude）で補正する。
+ * 通常検索（services/searchService.ts の runSearch）・AI検索（parseAiPrompt経由の
+ * 検索文字列）のどちらも最終的にrunSearchを通るため、この関数はその両方に効く。
+ */
+export async function correctQuery(rawText: string): Promise<string> {
+  const trimmed = rawText.trim()
+  if (!trimmed) return ''
+  const response = await askClaude(buildCorrectQueryPrompt(trimmed))
+  const corrected = response.trim()
+  return corrected || trimmed
 }
 
 export interface AiPromptResult {

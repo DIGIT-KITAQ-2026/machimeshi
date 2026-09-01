@@ -27,8 +27,11 @@ function mapSearchHistoryRow(row: SearchHistoryRow): SearchHistoryItem {
  * フィルタは含めず、フィルタ適用は applySearchFilters() で別途行う（機能要件4）。
  */
 export async function runSearch(queryText: string): Promise<StoreSearchResult[]> {
-  const corrected = correctQuery(queryText)
-  const [stores, visits] = await Promise.all([getStores(), getAllVisits()])
+  const [corrected, stores, visits] = await Promise.all([
+    correctQuery(queryText),
+    getStores(),
+    getAllVisits(),
+  ])
   const now = new Date()
 
   const matched = corrected
