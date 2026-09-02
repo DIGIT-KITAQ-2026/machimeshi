@@ -1,0 +1,151 @@
+.login-screen {
+  display: flex;
+  flex-direction: column;
+  min-height: 100svh;
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 16px 20px calc(24px + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+  background: var(--bg);
+}
+
+.login-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 32px;
+}
+
+.login-tabs {
+  display: flex;
+  padding: 4px;
+  border-radius: 999px;
+  background: var(--code-bg);
+  margin-bottom: 32px;
+}
+
+.login-tab {
+  flex: 1;
+  border: none;
+  background: transparent;
+  border-radius: 999px;
+  padding: 10px 0;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+
+.login-tab-active {
+  background: var(--bg);
+  color: var(--text-h);
+  box-shadow: var(--shadow);
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.login-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.login-label {
+  font-size: 13px;
+  color: var(--text);
+}
+
+.login-field input {
+  height: 46px;
+  padding: 0 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--text-h);
+  font: inherit;
+  font-size: 15px;
+  box-sizing: border-box;
+}
+
+.login-field input:focus {
+  outline: none;
+  border-color: var(--accent-border);
+  box-shadow: 0 0 0 3px var(--accent-bg);
+}
+
+.login-password-input {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.login-password-input input {
+  width: 100%;
+  padding-right: 44px;
+}
+
+.login-password-toggle {
+  position: absolute;
+  right: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  border-radius: 50%;
+}
+
+.login-password-toggle:hover {
+  background: var(--code-bg);
+}
+
+.login-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.login-cancel,
+.login-submit {
+  flex: 1;
+  height: 48px;
+  border-radius: 999px;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.login-cancel {
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-h);
+}
+
+.login-cancel:hover {
+  background: var(--code-bg);
+}
+
+.login-submit {
+  border: none;
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 4px 14px -4px var(--accent-border);
+  transition: filter 0.2s, transform 0.2s;
+}
+
+.login-submit:hover {
+  filter: brightness(1.05);
+  transform: translateY(-1px);
+}

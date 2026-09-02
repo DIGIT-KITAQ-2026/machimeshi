@@ -1,0 +1,92 @@
+.store-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.store-name {
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--text-h);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 12px;
+}
+
+.store-header-actions {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.store-header-actions .icon-button {
+  width: 32px;
+  height: 32px;
+}
+
+.store-meta,
+.store-hours {
+  margin-top: 12px;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.store-photos {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.store-photo {
+  flex: 1;
+  aspect-ratio: 1;
+  border-radius: 16px;
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--border);
+}
+
+.store-overview {
+  margin-top: 24px;
+}
+
+.store-overview h2 {
+  font-size: 16px;
+  margin: 0 0 8px;
+}
+
+.store-overview p {
+  min-height: 160px;
+  margin: 0;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 14px;
+  color: var(--text);
+  box-sizing: border-box;
+}
+
+.store-checkin-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 48px;
+  margin-top: 20px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 500;
+  box-shadow: 0 4px 14px -4px var(--accent-border);
+  transition: filter 0.2s, transform 0.2s;
+}
+
+.store-checkin-link:hover {
+  filter: brightness(1.05);
+  transform: translateY(-1px);
+}

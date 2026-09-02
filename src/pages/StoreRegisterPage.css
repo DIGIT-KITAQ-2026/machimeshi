@@ -1,0 +1,145 @@
+.store-register-screen {
+  display: flex;
+  flex-direction: column;
+  min-height: 100svh;
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 16px 20px calc(24px + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+  background: var(--bg);
+}
+
+.store-register-back {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  align-self: flex-start;
+  border: none;
+  background: none;
+  padding: 8px 4px;
+  margin-bottom: 16px;
+  margin-left: -4px;
+  font: inherit;
+  font-size: 15px;
+  color: var(--text-h);
+  cursor: pointer;
+}
+
+.store-register-back:hover {
+  color: var(--accent);
+}
+
+.store-register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.store-register-row {
+  display: flex;
+  gap: 12px;
+}
+
+.store-register-row .store-register-field {
+  flex: 1;
+}
+
+.store-register-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.store-register-label {
+  font-size: 13px;
+  color: var(--text);
+}
+
+.store-register-field input,
+.store-register-field select {
+  height: 46px;
+  padding: 0 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--text-h);
+  font: inherit;
+  font-size: 15px;
+  box-sizing: border-box;
+}
+
+.store-register-field input:focus,
+.store-register-field select:focus {
+  outline: none;
+  border-color: var(--accent-border);
+  box-shadow: 0 0 0 3px var(--accent-bg);
+}
+
+.store-register-slider-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.store-register-slider-row input[type='range'] {
+  flex: 1;
+  accent-color: var(--accent);
+}
+
+.store-register-slider-value {
+  min-width: 64px;
+  text-align: right;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-h);
+}
+
+.store-register-time-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text);
+}
+
+.store-register-time-row input {
+  flex: 1;
+}
+
+.store-register-photo {
+  width: 88px;
+  height: 88px;
+  border-radius: 12px;
+  border: 1px dashed var(--border);
+  background: var(--code-bg);
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.store-register-photo:hover {
+  color: var(--accent);
+  border-color: var(--accent-border);
+}
+
+.store-register-submit {
+  height: 50px;
+  border: none;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  font: inherit;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 4px 14px -4px var(--accent-border);
+  transition: filter 0.2s, transform 0.2s;
+  margin-top: 8px;
+}
+
+.store-register-submit:hover {
+  filter: brightness(1.05);
+  transform: translateY(-1px);
+}

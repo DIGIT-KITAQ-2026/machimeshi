@@ -1,0 +1,35 @@
+.recommend-section h2 {
+  font-size: 18px;
+  margin: 0 0 12px;
+}
+
+.recommend-scroll {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+}
+
+.recommend-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.recommend-card {
+  flex: 0 0 auto;
+  width: 130px;
+  height: 130px;
+  border-radius: 16px;
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--border);
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.recommend-card:hover {
+  box-shadow: var(--shadow);
+  transform: translateY(-2px);
+}
