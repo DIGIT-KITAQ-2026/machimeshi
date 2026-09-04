@@ -1,11 +1,11 @@
 // ==========================================================================
 // AI関連機能。
 //
-// 「1.2 AIによる検索補正」「1.3 AI検索」は src/services/claudeService.ts
-// （Claude Agent SDK経由）を使って実際にClaudeへ問い合わせる。
-// それ以外（「3. 待ち時間予測機能」「5. おすすめ検索機能」）は、実際のLLM/予測APIを
-// 呼ばずに説明可能なヒューリスティックで実装している（将来置き換える場合も、
-// 関数のシグネチャを変えずに中身だけ差し替えれば、呼び出し側は変更不要になる想定）。
+// 「1.2 AIによる検索補正」「1.3 AI検索」「5. おすすめ検索機能（AI版）」は
+// src/services/claudeService.ts（Claude Agent SDK経由）を使って実際にClaudeへ問い合わせる。
+// 「3. 待ち時間予測機能」は、実際のLLM/予測APIを呼ばずに説明可能なヒューリスティックで実装している。
+// 「5. おすすめ検索機能」のヒューリスティック版（getRecommendations）は、
+// claude-serverが未起動の場合などにAI版（getAiRecommendations）からのフォールバック先として残している。
 // ==========================================================================
 
 import type { SearchFilters, SearchHistoryItem, Store, Visit } from '../types'
@@ -166,7 +166,7 @@ export function predictWaitMinutes(store: Store, visits: Visit[], now: Date): Wa
 
 const DEFAULT_RECOMMENDATIONS = ['今すぐ入れるラーメン店', 'コスパ重視の定食屋', '今日はご褒美に焼肉']
 
-/** 5. おすすめ検索機能: 検索履歴の頻出ジャンルから、おすすめの検索文字列を生成する */
+/** 5. おすすめ検索機能（ヒューリスティック版）: 検索履歴の頻出ジャンルから、おすすめの検索文字列を生成する */
 export function getRecommendations(history: SearchHistoryItem[]): string[] {
   const genreCount = new Map<string, number>()
   for (const item of history) {
@@ -189,4 +189,70 @@ export function getRecommendations(history: SearchHistoryItem[]): string[] {
     `安い${genre}`,
   ])
   return [...new Set(suggestions)].slice(0, 4)
+}
+
+function buildRecommendationPrompt(history: SearchHistoryItem[], now: Date): string {
+  const recentQueries = history
+    .slice(-10)
+    .map((item) => item.queryText.trim())
+    .filter(Boolean)
+  const hour = now.getHours()
+  const timeHint = hour < 11 ? '朝' : hour < 14 ? '昼' : hour < 17 ? '午後' : '夜'
+
+  return [
+    'あなたは飲食店検索アプリの「おすすめ」提案アシスタントです。',
+    'ユーザーの検索履歴と現在の時間帯から、その人が今検索したくなりそうな',
+    '検索キーワードを4つ提案してください。',
+    '',
+    `利用可能なジャンル: ${GENRE_LIST.join(', ')}`,
+    `現在の時間帯: ${timeHint}`,
+    recentQueries.length > 0
+      ? `直近の検索履歴（入力順）: ${recentQueries.join(' / ')}`
+      : '検索履歴はまだありません。時間帯に合わせた一般的な提案をしてください。',
+    '',
+    '提案のルール:',
+    '- 各提案は「ラーメンで今空いてるお店」のように、そのまま検索欄に入力できる短い文にする',
+    '- 検索履歴がある場合は、頻出するジャンルや傾向を踏まえた提案を優先する',
+    '- 4件とも異なる提案にする',
+    '',
+    '出力は必ず次の形式のJSON配列のみを返してください。',
+    '説明文や前置き、Markdownのコードブロック記法（```）は一切付けないこと。',
+    '["提案1", "提案2", "提案3", "提案4"]',
+  ].join('\n')
+}
+
+/** Claudeの応答テキストからJSON配列部分を取り出してパースする（```json ... ```で囲まれて返る場合に備える） */
+function parseRecommendationResponse(text: string): string[] {
+  const stripped = text
+    .trim()
+    .replace(/^```(?:json)?\s*/i, '')
+    .replace(/```\s*$/i, '')
+    .trim()
+
+  const raw = JSON.parse(stripped) as unknown
+  if (!Array.isArray(raw)) throw new Error('おすすめ提案の形式が不正です')
+
+  const suggestions = raw
+    .filter((s): s is string => typeof s === 'string' && s.trim().length > 0)
+    .map((s) => s.trim())
+  if (suggestions.length === 0) throw new Error('おすすめ提案が空でした')
+
+  return [...new Set(suggestions)].slice(0, 4)
+}
+
+/**
+ * 5. おすすめ検索機能（AI版）: 検索履歴と現在時刻から、Claudeにおすすめの検索文字列を提案してもらう。
+ * claude-serverが未起動、または応答の解析に失敗した場合は、ヒューリスティック版（getRecommendations）に
+ * フォールバックする（おすすめは付加的な機能のため、エラーを投げて画面をブロックしない）。
+ */
+export async function getAiRecommendations(
+  history: SearchHistoryItem[],
+  now: Date = new Date(),
+): Promise<string[]> {
+  try {
+    const response = await askClaude(buildRecommendationPrompt(history, now))
+    return parseRecommendationResponse(response)
+  } catch {
+    return getRecommendations(history)
+  }
 }

@@ -7,7 +7,7 @@ import UserSettingsDrawer from '../components/UserSettingsDrawer'
 import { useStoreAuth } from '../hooks/useStoreAuth'
 import { getErrorMessage } from '../lib/errors'
 import { addSearchHistory, getSearchHistory } from '../services/searchService'
-import { getRecommendations, parseAiPrompt } from '../services/aiService'
+import { getAiRecommendations, getRecommendations, parseAiPrompt } from '../services/aiService'
 import type { SearchFilters } from '../types'
 
 /** 画面0: トップ画面 */
@@ -23,13 +23,18 @@ export default function TopPage() {
   useEffect(() => {
     if (!userId) return
     let cancelled = false
-    getSearchHistory(userId)
-      .then((history) => {
-        if (!cancelled) setRecommendations(getRecommendations(history))
-      })
-      .catch(() => {
+    ;(async () => {
+      try {
+        const history = await getSearchHistory(userId)
+        if (cancelled) return
+        // AI応答を待つ間は、即座に出せるヒューリスティック版をまず表示しておく
+        setRecommendations(getRecommendations(history))
+        const aiSuggestions = await getAiRecommendations(history)
+        if (!cancelled) setRecommendations(aiSuggestions)
+      } catch {
         // おすすめは付加的な機能のため、取得に失敗してもデフォルト文言のまま表示を継続する
-      })
+      }
+    })()
     return () => {
       cancelled = true
     }
