@@ -8,7 +8,13 @@ import { deleteStoreImage, uploadStoreImages } from '../services/storageService'
 import GenreTagInput from '../components/GenreTagInput'
 import PriceRangeField from '../components/PriceRangeField'
 import ImageManager from '../components/ImageManager'
+import Select from '../components/Select'
 import type { IdGenerating } from '../types'
+
+const ID_GENERATING_OPTIONS: { value: IdGenerating; label: string }[] = [
+  { value: 'increment', label: '自動採番（インクリメント）' },
+  { value: 'manual', label: '手動入力' },
+]
 
 /** 画面5: 店舗設定画面 */
 export default function StoreSettingsPage() {
@@ -219,17 +225,15 @@ export default function StoreSettingsPage() {
           </label>
         </div>
 
-        <label className="form__field">
+        <div className="form__field">
           IDの生成方法
-          <select
-            className="text-field"
+          <Select
             value={idGenerating}
-            onChange={(e) => setIdGenerating(e.target.value as IdGenerating)}
-          >
-            <option value="increment">自動採番（インクリメント）</option>
-            <option value="manual">手動入力</option>
-          </select>
-        </label>
+            options={ID_GENERATING_OPTIONS}
+            onChange={setIdGenerating}
+            ariaLabel="IDの生成方法を選択"
+          />
+        </div>
 
         {saveError && <p className="form-error">{saveError}</p>}
 

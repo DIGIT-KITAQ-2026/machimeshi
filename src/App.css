@@ -168,14 +168,14 @@
   font-size: 14px;
 }
 
-/* ---------- グループ選択（カスタムセレクト） ---------- */
+/* ---------- カスタムセレクト ---------- */
 
-.group-select {
+.select {
   position: relative;
   width: 100%;
 }
 
-.group-select__trigger {
+.select__trigger {
   width: 100%;
   display: flex;
   align-items: center;
@@ -191,28 +191,28 @@
   transition: border-color 0.15s;
 }
 
-.group-select__trigger:focus-visible {
+.select__trigger:focus-visible {
   outline: none;
   border-color: var(--accent-border);
 }
 
-.group-select__placeholder {
+.select__placeholder {
   color: var(--text);
 }
 
-.group-select__arrow {
+.select__arrow {
   flex: 0 0 auto;
   font-size: 12px;
   color: var(--text);
   transition: transform 0.15s;
 }
 
-.group-select__arrow--open {
+.select__arrow--open {
   transform: rotate(180deg);
 }
 
 /* トリガーの真下に開く候補リスト */
-.group-select__list {
+.select__list {
   position: absolute;
   top: 100%;
   left: 0;
@@ -229,7 +229,7 @@
   overflow-y: auto;
 }
 
-.group-select__option {
+.select__option {
   width: 100%;
   border: none;
   border-radius: 8px;
@@ -241,11 +241,11 @@
   transition: background 0.12s;
 }
 
-.group-select__option:hover {
+.select__option:hover {
   background: var(--surface-alt);
 }
 
-.group-select__option--active {
+.select__option--active {
   background: var(--accent-bg);
   font-weight: 600;
 }
