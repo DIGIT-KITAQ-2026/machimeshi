@@ -16,7 +16,6 @@ export default function RecommendationList({ suggestions, onSelect }: Recommenda
           className="recommend-card"
           onClick={() => onSelect(text)}
         >
-          <span className="recommend-card__icon">✨</span>
           <span className="recommend-card__text">{text}</span>
         </button>
       ))}

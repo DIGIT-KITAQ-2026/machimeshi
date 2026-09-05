@@ -299,20 +299,11 @@
   gap: 8px;
   text-align: left;
   background: var(--surface);
-  border: 1px solid var(--border);
+  border: 2px solid var(--ai-border);
   border-radius: 14px;
   padding: 14px;
   min-height: 80px;
-  transition: box-shadow 0.15s, transform 0.15s;
-}
-
-.recommend-card:hover {
   box-shadow: var(--shadow);
-  transform: translateY(-2px);
-}
-
-.recommend-card__icon {
-  font-size: 18px;
 }
 
 .recommend-card__text {
