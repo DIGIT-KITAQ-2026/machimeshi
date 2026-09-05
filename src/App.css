@@ -296,9 +296,11 @@
 .recommend-card {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
   gap: 8px;
-  text-align: left;
-  background: var(--surface);
+  text-align: center;
+  background: var(--ai-bg);
   border: 2px solid var(--ai-border);
   border-radius: 14px;
   padding: 14px;
