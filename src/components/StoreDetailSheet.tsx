@@ -56,7 +56,14 @@ export default function StoreDetailSheet({ result, onClose }: StoreDetailSheetPr
         <div className="sheet__images">
           {store.storeImages.length > 0 ? (
             store.storeImages.map((url) => (
-              <img key={url} src={url} alt={store.name} className="sheet__image-photo" />
+              <img
+                key={url}
+                src={url}
+                alt={store.name}
+                className="sheet__image-photo"
+                loading="lazy"
+                decoding="async"
+              />
             ))
           ) : (
             <GenreThumbnail genres={store.genres} className="sheet__image" />
