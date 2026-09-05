@@ -45,7 +45,7 @@ export interface SearchHistoryItem {
 }
 
 export interface UserSettings {
-  language: '日本語' | 'English'
+  language: '日本語' | 'English' | '한국어'
   darkMode: boolean
 }
 
