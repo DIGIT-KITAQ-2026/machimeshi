@@ -86,7 +86,7 @@ export default function StoreSettingsPage() {
           onClick={() => navigate('/store/manage')}
           aria-label="戻る"
         >
-          ← 戻る
+          ←
         </button>
         <h1 className="page-header__title">店舗設定</h1>
       </header>

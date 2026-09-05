@@ -99,8 +99,8 @@
   color: var(--accent-contrast);
   font-weight: 600;
   font-size: 15px;
-  box-shadow: 0 4px 14px -4px var(--accent-border);
-  transition: filter 0.15s, transform 0.15s;
+  /* box-shadow: 0 4px 14px -4px var(--accent-border); */
+  /* transition: filter 0.15s, transform 0.15s; */
 }
 
 .primary-button:hover:not(:disabled) {
@@ -131,10 +131,13 @@
 
 .text-field {
   width: 100%;
-  border: 1px solid var(--border);
-  border-radius: 10px;
+  /* border: 1px solid var(--border); */
+  border: none;
+  border-bottom: 1px solid var(--border);
+  /* border-radius: 10px; */
   padding: 10px 12px;
-  background: var(--surface);
+  /* background: var(--surface); */
+  background: var(--bg);
   color: var(--text-h);
   font-size: 15px;
   transition: border-color 0.15s, box-shadow 0.15s;
@@ -142,8 +145,8 @@
 
 .text-field:focus {
   outline: none;
-  border-color: var(--accent-border);
-  box-shadow: 0 0 0 3px var(--accent-bg);
+  /* border-color: var(--accent-border); */
+  /* box-shadow: 0 0 0 3px var(--accent-bg); */
 }
 
 .text-field:focus-visible {
