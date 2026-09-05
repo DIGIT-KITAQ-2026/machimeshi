@@ -76,21 +76,20 @@ export default function TopPage() {
       </header>
 
       <section className="section">
-        <AiSearchBox onSubmit={handleAiSearch} loading={aiSearching} />
-        {aiError && <p className="form-error">{aiError}</p>}
-      </section>
-
-      <section className="section">
         <h2 className="section__title">あなたへのおすすめ</h2>
         <RecommendationList suggestions={recommendations} onSelect={(text) => goSearch(text)} />
       </section>
 
       <div className="page__spacer" />
 
+      <section className="section">
+        <AiSearchBox onSubmit={handleAiSearch} loading={aiSearching} />
+        {aiError && <p className="form-error">{aiError}</p>}
+      </section>
+
       <footer className="top-footer">
         <button type="button" className="store-link-button" onClick={() => navigate('/store/auth')}>
-          <span className="store-link-button__icon">🧑‍🍳</span>
-          店舗の方はこちら（開いてください）
+          店舗の方はこちら
         </button>
       </footer>
 
