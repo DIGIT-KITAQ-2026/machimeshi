@@ -6,6 +6,12 @@ import type { IdGenerating, Store } from '../types'
 
 type StoreRow = Database['public']['Tables']['stores']['Row']
 
+// SupabaseのtimeカラムはPostgresの慣例で"HH:MM:SS"形式の文字列を返すため、
+// 表示・<input type="time">での利用に合わせて"HH:MM"に切り詰める。
+function formatTime(value: string): string {
+  return value.slice(0, 5)
+}
+
 function mapStoreRow(row: StoreRow): Store {
   return {
     id: row.id,
@@ -16,8 +22,8 @@ function mapStoreRow(row: StoreRow): Store {
     websiteUrl: row.website_url ?? '',
     createdAt: row.created_at,
     updatedAt: row.updated_at,
-    openTime: row.open_time ?? '00:00',
-    closeTime: row.close_time ?? '00:00',
+    openTime: formatTime(row.open_time ?? '00:00'),
+    closeTime: formatTime(row.close_time ?? '00:00'),
     star: row.star ?? 0,
     priceMin: row.price_min ?? 0,
     priceMax: row.price_max ?? 0,
