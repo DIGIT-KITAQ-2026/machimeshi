@@ -319,27 +319,24 @@
 
 .top-footer {
   display: flex;
+  justify-content: center;
+  margin-top: -12px;
 }
 
 .store-link-button {
-  width: 100%;
+  width: auto;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  border: 1px dashed var(--accent-border);
+  border: none;
   border-radius: 999px;
-  padding: 14px;
-  background: var(--accent-bg);
+  padding: 4px 8px;
+  background: transparent;
   color: var(--text-h);
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 600;
-  transition: box-shadow 0.15s, transform 0.15s;
-}
-
-.store-link-button:hover {
-  box-shadow: var(--shadow);
-  transform: translateY(-1px);
+  text-decoration: underline;
 }
 
 /* ---------- サムネイル ---------- */
