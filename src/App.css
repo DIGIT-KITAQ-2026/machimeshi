@@ -445,6 +445,7 @@
   overflow: hidden;
   width: auto;
   min-width: 0;
+  height: 100px;
   aspect-ratio: 1 / 1;
 }
 
