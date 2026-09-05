@@ -1,4 +1,5 @@
 import { useUserSettings } from '../hooks/useUserSettings'
+import type { UserSettings } from '../types'
 
 interface UserSettingsDrawerProps {
   open: boolean
@@ -6,6 +7,8 @@ interface UserSettingsDrawerProps {
 }
 
 const APP_VERSION = '0.1.0'
+
+const LANGUAGES: Array<UserSettings['language']> = ['日本語', 'English', '한국어']
 
 /** ユーザ設定機能（機能要件7・画面3）: 右からスライドするドロワー */
 export default function UserSettingsDrawer({ open, onClose }: UserSettingsDrawerProps) {
@@ -25,17 +28,20 @@ export default function UserSettingsDrawer({ open, onClose }: UserSettingsDrawer
           </button>
         </div>
 
-        <div className="drawer__item">
+        <div className="drawer__item drawer__item--stack">
           <span>言語</span>
-          <select
-            value={settings.language}
-            onChange={(e) =>
-              updateSettings({ language: e.target.value as typeof settings.language })
-            }
-          >
-            <option value="日本語">日本語</option>
-            <option value="English">English</option>
-          </select>
+          <div className="segmented">
+            {LANGUAGES.map((lang) => (
+              <button
+                key={lang}
+                type="button"
+                className={`segmented__item ${settings.language === lang ? 'segmented__item--active' : ''}`}
+                onClick={() => updateSettings({ language: lang })}
+              >
+                {lang}
+              </button>
+            ))}
+          </div>
         </div>
 
         <div className="drawer__item">
