@@ -836,28 +836,47 @@
 /* ---------- タブ（店舗ログイン/登録） ---------- */
 
 .tab-row {
+  position: relative;
   display: flex;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  padding: 4px;
-  background: var(--surface);
+  /* border: 1px solid var(--border); */
+  border-bottom: 2px solid var(--border);
+  /* border-radius: 999px; */
+  padding: 0 4px;
+  /* background: var(--surface); */
 }
 
 .tab-row__item {
   flex: 1 1 0;
   border: none;
   background: transparent;
-  border-radius: 999px;
+  /* border-radius: 999px; */
   padding: 10px;
   font-size: 14px;
   font-weight: 600;
   color: var(--text);
-  transition: background 0.15s, color 0.15s, box-shadow 0.15s;
+  transition: color 0.2s;
 }
 
 .tab-row__item--active {
-  background: var(--accent);
+  /* background: var(--accent); */
   color: var(--accent-contrast);
+}
+
+/* アクティブなタブの下線。左右2つのタブ間をスライドして移動する */
+.tab-row__indicator {
+  position: absolute;
+  left: 4px;
+  bottom: 0;
+  width: calc(50% - 4px);
+  height: 2px;
+  background: var(--accent);
+  border-radius: 999px;
+  transition: transform 0.2s ease;
+  pointer-events: none;
+}
+
+.tab-row__indicator--register {
+  transform: translateX(100%);
 }
 
 .form {
