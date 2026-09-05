@@ -229,20 +229,28 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  background: var(--accent-bg);
-  border: 1px solid var(--accent-border);
+  background: var(--ai-bg);
+  border: 1px solid var(--ai-border);
   border-radius: 14px;
   padding: 10px 10px 10px 14px;
+  box-shadow: 0 4px 16px -6px var(--ai-border);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.ai-search-box:focus-within {
+  border-color: var(--ai);
+  box-shadow: 0 0 0 3px var(--ai-bg), 0 4px 16px -6px var(--ai-border);
 }
 
 .ai-search-box__badge {
   flex: 0 0 auto;
   font-size: 11px;
   font-weight: 700;
-  color: var(--accent-contrast);
-  background: var(--accent);
+  letter-spacing: 0.3px;
+  color: var(--ai-contrast);
+  background: var(--ai-gradient);
   border-radius: 999px;
-  padding: 3px 7px;
+  padding: 3px 8px;
 }
 
 .ai-search-box__input {
@@ -260,17 +268,24 @@
   border: none;
   border-radius: 10px;
   padding: 8px 12px;
-  background: var(--accent);
-  color: var(--accent-contrast);
+  background: var(--ai-gradient);
+  color: var(--ai-contrast);
   font-size: 13px;
   font-weight: 600;
   white-space: nowrap;
+  box-shadow: 0 4px 14px -4px var(--ai-border);
   transition: filter 0.15s, transform 0.15s;
 }
 
-.ai-search-box__button:hover {
-  filter: brightness(1.05);
+.ai-search-box__button:hover:not(:disabled) {
+  filter: brightness(1.08);
   transform: translateY(-1px);
+}
+
+.ai-search-box__button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
 }
 
 /* ---------- おすすめ ---------- */
@@ -287,20 +302,11 @@
   gap: 8px;
   text-align: left;
   background: var(--surface);
-  border: 1px solid var(--border);
+  border: 2px solid var(--ai-border);
   border-radius: 14px;
   padding: 14px;
   min-height: 80px;
-  transition: box-shadow 0.15s, transform 0.15s;
-}
-
-.recommend-card:hover {
   box-shadow: var(--shadow);
-  transform: translateY(-2px);
-}
-
-.recommend-card__icon {
-  font-size: 18px;
 }
 
 .recommend-card__text {
