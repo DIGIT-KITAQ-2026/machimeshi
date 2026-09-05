@@ -73,6 +73,10 @@ export default function StoreAuthPage() {
         >
           新規登録
         </button>
+        <span
+          className={`tab-row__indicator ${tab === 'register' ? 'tab-row__indicator--register' : ''}`}
+          aria-hidden="true"
+        />
       </div>
 
       {error && <p className="form-error">{error}</p>}
