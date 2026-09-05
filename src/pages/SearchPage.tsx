@@ -88,7 +88,7 @@ export default function SearchPage() {
   const filteredResults = useMemo(() => applySearchFilters(results, filters), [results, filters])
 
   return (
-    <div className="page">
+    <div className="page page--search">
       <header className="page-header">
         <button type="button" className="icon-button" onClick={() => navigate('/')} aria-label="トップへ戻る">
           ←
@@ -103,10 +103,6 @@ export default function SearchPage() {
           ☰
         </button>
       </header>
-
-      <section className="section">
-        <AiSearchBox onSubmit={handleAiSearch} loading={searching} />
-      </section>
 
       <div className="search-toolbar">
         <p className="search-toolbar__count">
@@ -138,6 +134,10 @@ export default function SearchPage() {
 
       <StoreDetailSheet result={selected} onClose={() => setSelected(null)} />
       <UserSettingsDrawer open={settingsOpen} onClose={() => setSettingsOpen(false)} />
+
+      <div className="search-ai-fixed">
+        <AiSearchBox onSubmit={handleAiSearch} loading={searching} />
+      </div>
     </div>
   )
 }
