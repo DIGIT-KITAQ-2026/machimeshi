@@ -30,6 +30,7 @@
 .logo-text {
   display: flex;
   align-items: baseline;
+  font-family: 'M PLUS Rounded 1c', var(--sans);
   font-size: 26px;
   font-weight: 800;
   letter-spacing: -0.02em;
