@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
+import Logo from '../components/Logo'
 import SearchBar from '../components/SearchBar'
 import AiSearchBox from '../components/AiSearchBox'
 import FilterPanel from '../components/FilterPanel'
@@ -89,6 +90,7 @@ export default function SearchPage() {
 
   return (
     <div className="page page--search">
+      <Logo />
       <header className="page-header">
         <button type="button" className="icon-button" onClick={() => navigate('/')} aria-label="トップへ戻る">
           ←

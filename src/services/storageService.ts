@@ -4,6 +4,7 @@
 // 追加・削除できるようにしている（閲覧は誰でも可）。
 
 import { supabase } from '../lib/supabaseClient'
+import { resizeImageFile } from '../lib/imageResize'
 
 const BUCKET = 'store-images'
 const PUBLIC_URL_MARKER = `/object/public/${BUCKET}/`
@@ -18,8 +19,10 @@ function buildObjectPath(storeId: string, file: File): string {
 export async function uploadStoreImages(storeId: string, files: File[]): Promise<string[]> {
   const urls: string[] = []
   for (const file of files) {
-    const path = buildObjectPath(storeId, file)
-    const { error } = await supabase.storage.from(BUCKET).upload(path, file, { upsert: false })
+    // 表示が重くならないよう、アップロード前にブラウザ側でリサイズ・再圧縮する
+    const resized = await resizeImageFile(file)
+    const path = buildObjectPath(storeId, resized)
+    const { error } = await supabase.storage.from(BUCKET).upload(path, resized, { upsert: false })
     if (error) throw new Error(`画像のアップロードに失敗しました（${file.name}）: ${error.message}`)
     const { data } = supabase.storage.from(BUCKET).getPublicUrl(path)
     urls.push(data.publicUrl)

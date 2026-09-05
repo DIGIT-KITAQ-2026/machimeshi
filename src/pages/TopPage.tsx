@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import Logo from '../components/Logo'
 import SearchBar from '../components/SearchBar'
 import AiSearchBox from '../components/AiSearchBox'
 import RecommendationList from '../components/RecommendationList'
@@ -61,6 +62,7 @@ export default function TopPage() {
 
   return (
     <div className="page">
+      <Logo />
       <header className="page-header">
         <SearchBar onSubmit={(text) => goSearch(text)} />
         <button

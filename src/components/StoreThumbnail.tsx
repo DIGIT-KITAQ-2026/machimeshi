@@ -17,6 +17,8 @@ export default function StoreThumbnail({ storeImages, genres, className }: Store
         src={storeImages[0]}
         alt={genres.join('・') || '店舗画像'}
         className={`store-thumbnail-img ${className ?? ''}`}
+        loading="lazy"
+        decoding="async"
       />
     )
   }
