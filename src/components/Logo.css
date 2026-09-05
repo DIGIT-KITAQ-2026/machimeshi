@@ -1,0 +1,44 @@
+.logo {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-decoration: none;
+  padding: 4px 0 2px;
+  transition: transform 0.15s;
+}
+
+.logo:hover {
+  transform: translateY(-1px);
+}
+
+.logo-mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+  box-shadow:
+    0 6px 14px -4px var(--accent-border),
+    inset 0 1px 1px rgba(255, 255, 255, 0.4);
+}
+
+.logo-text {
+  display: flex;
+  align-items: baseline;
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.logo-text-primary {
+  color: var(--text-h);
+}
+
+.logo-text-accent {
+  color: var(--accent);
+}
