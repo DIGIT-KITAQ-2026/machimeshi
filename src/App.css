@@ -878,10 +878,10 @@
   transition: color 0.2s;
 }
 
-.tab-row__item--active {
-  /* background: var(--accent); */
+/* .tab-row__item--active {
+  background: var(--accent);
   color: var(--accent-contrast);
-}
+} */
 
 /* アクティブなタブの下線。左右2つのタブ間をスライドして移動する */
 .tab-row__indicator {
