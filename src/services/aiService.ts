@@ -10,6 +10,7 @@
 
 import type { SearchFilters, SearchHistoryItem, Store, Visit } from '../types'
 import { GENRE_LIST } from '../data/genres'
+import { getDictionary } from '../i18n'
 import { askClaude } from './claudeService'
 
 function buildCorrectQueryPrompt(rawText: string): string {
@@ -119,7 +120,7 @@ export async function parseAiPrompt(prompt: string): Promise<AiPromptResult> {
   try {
     return parseAiSearchResponse(response)
   } catch {
-    throw new Error('Claudeの応答を解析できませんでした')
+    throw new Error(getDictionary().errors.aiResponseParseFailed)
   }
 }
 

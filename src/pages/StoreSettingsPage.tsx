@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useStoreAuth } from '../hooks/useStoreAuth'
+import { useTranslation } from '../hooks/useTranslation'
 import { getErrorMessage } from '../lib/errors'
 import { updateStoreSettings } from '../services/storeService'
 import { deleteStoreImage, uploadStoreImages } from '../services/storageService'
@@ -9,16 +10,20 @@ import GenreTagInput from '../components/GenreTagInput'
 import PriceRangeField from '../components/PriceRangeField'
 import ImageManager from '../components/ImageManager'
 import Select from '../components/Select'
+import type { Dictionary } from '../i18n'
 import type { IdGenerating } from '../types'
 
-const ID_GENERATING_OPTIONS: { value: IdGenerating; label: string }[] = [
-  { value: 'increment', label: '自動採番（インクリメント）' },
-  { value: 'manual', label: '手動入力' },
-]
+function idGeneratingOptions(t: Dictionary): { value: IdGenerating; label: string }[] {
+  return [
+    { value: 'increment', label: t.storeSettings.idGeneratingIncrement },
+    { value: 'manual', label: t.storeSettings.idGeneratingManual },
+  ]
+}
 
 /** 画面5: 店舗設定画面 */
 export default function StoreSettingsPage() {
   const navigate = useNavigate()
+  const t = useTranslation()
   const { store, refresh } = useStoreAuth()
 
   const [name, setName] = useState(store?.name ?? '')
@@ -78,7 +83,7 @@ export default function StoreSettingsPage() {
       await refresh()
       navigate('/store/manage')
     } catch (err) {
-      setSaveError(getErrorMessage(err, '保存に失敗しました'))
+      setSaveError(getErrorMessage(err, t.errors.saveFailed))
       setSaving(false)
     }
   }
@@ -90,16 +95,16 @@ export default function StoreSettingsPage() {
           type="button"
           className="icon-button"
           onClick={() => navigate('/store/manage')}
-          aria-label="戻る"
+          aria-label={t.storeSettings.backAria}
         >
           ←
         </button>
-        <h1 className="page-header__title">店舗設定</h1>
+        <h1 className="page-header__title">{t.storeSettings.title}</h1>
       </header>
 
       <form className="form" onSubmit={handleSubmit}>
         <label className="form__field">
-          店名
+          {t.storeSettings.name}
           <input
             type="text"
             className="text-field"
@@ -110,7 +115,7 @@ export default function StoreSettingsPage() {
         </label>
 
         <label className="form__field">
-          概要
+          {t.storeSettings.description}
           <textarea
             className="text-field"
             rows={3}
@@ -120,7 +125,7 @@ export default function StoreSettingsPage() {
         </label>
 
         <label className="form__field">
-          住所
+          {t.storeSettings.address}
           <input
             type="text"
             className="text-field"
@@ -130,7 +135,7 @@ export default function StoreSettingsPage() {
         </label>
 
         <label className="form__field">
-          電話番号
+          {t.storeSettings.phone}
           <input
             type="tel"
             className="text-field"
@@ -140,7 +145,7 @@ export default function StoreSettingsPage() {
         </label>
 
         <label className="form__field">
-          ウェブサイトURL
+          {t.storeSettings.websiteUrl}
           <input
             type="text"
             className="text-field"
@@ -151,7 +156,7 @@ export default function StoreSettingsPage() {
         </label>
 
         <div className="form__field">
-          金額
+          {t.storeSettings.price}
           <PriceRangeField
             priceMin={priceMin}
             priceMax={priceMax}
@@ -163,7 +168,7 @@ export default function StoreSettingsPage() {
         </div>
 
         <div className="form__field">
-          営業時間
+          {t.storeSettings.hours}
           <div className="time-range">
             <input
               type="time"
@@ -182,12 +187,12 @@ export default function StoreSettingsPage() {
         </div>
 
         <div className="form__field">
-          ジャンル（タグ）
+          {t.storeSettings.genresLabel}
           <GenreTagInput value={genres} onChange={setGenres} />
         </div>
 
         <div className="form__field">
-          写真
+          {t.storeSettings.photos}
           <ImageManager
             existingUrls={existingImages}
             onRemoveExisting={(url) => {
@@ -204,7 +209,7 @@ export default function StoreSettingsPage() {
 
         <div className="form__row">
           <label className="form__field">
-            卓の数
+            {t.storeSettings.tableAmount}
             <input
               type="number"
               className="text-field"
@@ -214,7 +219,7 @@ export default function StoreSettingsPage() {
             />
           </label>
           <label className="form__field">
-            カウンターの数
+            {t.storeSettings.counterAmount}
             <input
               type="number"
               className="text-field"
@@ -226,19 +231,19 @@ export default function StoreSettingsPage() {
         </div>
 
         <div className="form__field">
-          IDの生成方法
+          {t.storeSettings.idGeneratingLabel}
           <Select
             value={idGenerating}
-            options={ID_GENERATING_OPTIONS}
+            options={idGeneratingOptions(t)}
             onChange={setIdGenerating}
-            ariaLabel="IDの生成方法を選択"
+            ariaLabel={t.storeSettings.idGeneratingSelectAria}
           />
         </div>
 
         {saveError && <p className="form-error">{saveError}</p>}
 
         <button type="submit" className="primary-button" disabled={saving}>
-          {saving ? '保存中...' : '決定'}
+          {saving ? t.storeSettings.savingSubmit : t.storeSettings.saveSubmit}
         </button>
       </form>
     </div>

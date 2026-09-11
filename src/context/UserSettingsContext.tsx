@@ -4,6 +4,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import type { ReactNode } from 'react'
 import { readJson, writeJson } from '../lib/storage'
+import { LANG_CODE } from '../i18n'
 import { UserSettingsContext } from './userSettingsContextValue'
 import type { UserSettingsContextValue } from './userSettingsContextValue'
 import type { UserSettings } from '../types'
@@ -23,6 +24,7 @@ export function UserSettingsProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     writeJson(KEY, settings)
     document.documentElement.setAttribute('data-theme', settings.darkMode ? 'dark' : 'light')
+    document.documentElement.lang = LANG_CODE[settings.language]
   }, [settings])
 
   const value = useMemo<UserSettingsContextValue>(

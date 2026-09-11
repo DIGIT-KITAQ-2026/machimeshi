@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useStoreAuth } from '../hooks/useStoreAuth'
+import { useTranslation } from '../hooks/useTranslation'
 import { getErrorMessage } from '../lib/errors'
 
 type Tab = 'login' | 'register'
@@ -9,6 +10,7 @@ type Tab = 'login' | 'register'
 /** 画面4: 店舗ログイン・登録画面 */
 export default function StoreAuthPage() {
   const navigate = useNavigate()
+  const t = useTranslation()
   const { signIn, register } = useStoreAuth()
   const [tab, setTab] = useState<Tab>('login')
   const [error, setError] = useState('')
@@ -29,7 +31,7 @@ export default function StoreAuthPage() {
       await signIn(loginEmail, loginPassword)
       navigate('/store/manage')
     } catch (err) {
-      setError(getErrorMessage(err))
+      setError(getErrorMessage(err, t.errors.unknown))
     } finally {
       setSubmitting(false)
     }
@@ -43,7 +45,7 @@ export default function StoreAuthPage() {
       await register(registerName, registerEmail, registerPassword)
       navigate('/store/settings')
     } catch (err) {
-      setError(getErrorMessage(err))
+      setError(getErrorMessage(err, t.errors.unknown))
     } finally {
       setSubmitting(false)
     }
@@ -52,10 +54,10 @@ export default function StoreAuthPage() {
   return (
     <div className="page">
       <header className="page-header">
-        <button type="button" className="icon-button" onClick={() => navigate('/')} aria-label="トップへ戻る">
+        <button type="button" className="icon-button" onClick={() => navigate('/')} aria-label={t.common.backToTop}>
           ←
         </button>
-        <h1 className="page-header__title">店舗の方へ</h1>
+        <h1 className="page-header__title">{t.storeAuth.title}</h1>
       </header>
 
       <div className="tab-row">
@@ -64,14 +66,14 @@ export default function StoreAuthPage() {
           className={`tab-row__item ${tab === 'login' ? 'tab-row__item--active' : ''}`}
           onClick={() => setTab('login')}
         >
-          ログイン
+          {t.storeAuth.loginTab}
         </button>
         <button
           type="button"
           className={`tab-row__item ${tab === 'register' ? 'tab-row__item--active' : ''}`}
           onClick={() => setTab('register')}
         >
-          新規登録
+          {t.storeAuth.registerTab}
         </button>
         <span
           className={`tab-row__indicator ${tab === 'register' ? 'tab-row__indicator--register' : ''}`}
@@ -84,7 +86,7 @@ export default function StoreAuthPage() {
       {tab === 'login' ? (
         <form className="form" onSubmit={handleLogin}>
           <label className="form__field">
-            メールアドレス
+            {t.storeAuth.email}
             <input
               type="email"
               className="text-field"
@@ -94,7 +96,7 @@ export default function StoreAuthPage() {
             />
           </label>
           <label className="form__field">
-            パスワード
+            {t.storeAuth.password}
             <input
               type="password"
               className="text-field"
@@ -104,13 +106,13 @@ export default function StoreAuthPage() {
             />
           </label>
           <button type="submit" className="primary-button" disabled={submitting}>
-            {submitting ? 'ログイン中...' : 'ログイン'}
+            {submitting ? t.storeAuth.loginSubmitting : t.storeAuth.loginSubmit}
           </button>
         </form>
       ) : (
         <form className="form" onSubmit={handleRegister}>
           <label className="form__field">
-            店名
+            {t.storeAuth.storeName}
             <input
               type="text"
               className="text-field"
@@ -120,7 +122,7 @@ export default function StoreAuthPage() {
             />
           </label>
           <label className="form__field">
-            メールアドレス
+            {t.storeAuth.email}
             <input
               type="email"
               className="text-field"
@@ -130,7 +132,7 @@ export default function StoreAuthPage() {
             />
           </label>
           <label className="form__field">
-            パスワード
+            {t.storeAuth.password}
             <input
               type="password"
               className="text-field"
@@ -141,7 +143,7 @@ export default function StoreAuthPage() {
             />
           </label>
           <button type="submit" className="primary-button" disabled={submitting}>
-            {submitting ? '登録中...' : '新規登録'}
+            {submitting ? t.storeAuth.registerSubmitting : t.storeAuth.registerSubmit}
           </button>
         </form>
       )}

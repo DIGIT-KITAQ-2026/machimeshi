@@ -1,4 +1,5 @@
 import { useUserSettings } from '../hooks/useUserSettings'
+import { useTranslation } from '../hooks/useTranslation'
 import type { UserSettings } from '../types'
 
 interface UserSettingsDrawerProps {
@@ -8,11 +9,14 @@ interface UserSettingsDrawerProps {
 
 const APP_VERSION = '0.1.0'
 
+// 表示言語の選択肢そのものであり、UserSettings.languageの実値なので翻訳しない
+// （辞書のキーではなく、そのまま保存・比較される文字列）。
 const LANGUAGES: Array<UserSettings['language']> = ['日本語', 'English', '한국어']
 
 /** ユーザ設定機能（機能要件7・画面3）: 右からスライドするドロワー */
 export default function UserSettingsDrawer({ open, onClose }: UserSettingsDrawerProps) {
   const { settings, updateSettings } = useUserSettings()
+  const t = useTranslation()
 
   return (
     <div className={`drawer-backdrop ${open ? 'drawer-backdrop--open' : ''}`} onClick={onClose}>
@@ -22,14 +26,14 @@ export default function UserSettingsDrawer({ open, onClose }: UserSettingsDrawer
         aria-hidden={!open}
       >
         <div className="drawer__header">
-          <h2>設定</h2>
-          <button type="button" className="sheet__close" onClick={onClose} aria-label="閉じる">
+          <h2>{t.common.settings}</h2>
+          <button type="button" className="sheet__close" onClick={onClose} aria-label={t.common.close}>
             ×
           </button>
         </div>
 
         <div className="drawer__item drawer__item--stack">
-          <span>言語</span>
+          <span>{t.settingsDrawer.language}</span>
           <div className="segmented">
             {LANGUAGES.map((lang) => (
               <button
@@ -45,22 +49,22 @@ export default function UserSettingsDrawer({ open, onClose }: UserSettingsDrawer
         </div>
 
         <div className="drawer__item">
-          <span>連絡先</span>
+          <span>{t.settingsDrawer.contact}</span>
           <span className="drawer__value">support@machimeshi.example.com</span>
         </div>
 
         <div className="drawer__item">
-          <span>利用規約</span>
-          <span className="drawer__value">準備中</span>
+          <span>{t.settingsDrawer.terms}</span>
+          <span className="drawer__value">{t.settingsDrawer.preparing}</span>
         </div>
 
         <div className="drawer__item">
-          <span>バージョン</span>
+          <span>{t.settingsDrawer.version}</span>
           <span className="drawer__value">{APP_VERSION}</span>
         </div>
 
         <div className="drawer__item">
-          <span>ダークモード</span>
+          <span>{t.settingsDrawer.darkMode}</span>
           <label className="toggle-switch">
             <input
               type="checkbox"

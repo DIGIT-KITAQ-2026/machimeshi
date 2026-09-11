@@ -1,3 +1,5 @@
+import { useTranslation } from '../hooks/useTranslation'
+
 interface HamburgerMenuProps {
   open: boolean
   onClose: () => void
@@ -14,6 +16,7 @@ export default function HamburgerMenu({
   onNavigateSettings,
   onLogout,
 }: HamburgerMenuProps) {
+  const t = useTranslation()
   return (
     <div className={`drawer-backdrop ${open ? 'drawer-backdrop--open' : ''}`} onClick={onClose}>
       <aside
@@ -23,16 +26,16 @@ export default function HamburgerMenu({
       >
         <div className="drawer__header">
           <h2>{storeName}</h2>
-          <button type="button" className="sheet__close" onClick={onClose} aria-label="閉じる">
+          <button type="button" className="sheet__close" onClick={onClose} aria-label={t.common.close}>
             ×
           </button>
         </div>
         <nav className="drawer__nav">
           <button type="button" className="drawer__nav-item" onClick={onNavigateSettings}>
-            ⚙️ 設定
+            ⚙️ {t.hamburgerMenu.settings}
           </button>
           <button type="button" className="drawer__nav-item" onClick={onLogout}>
-            🚪 ログアウト
+            🚪 {t.hamburgerMenu.logout}
           </button>
         </nav>
       </aside>

@@ -8,6 +8,7 @@ import StoreCard from '../components/StoreCard'
 import StoreDetailSheet from '../components/StoreDetailSheet'
 import UserSettingsDrawer from '../components/UserSettingsDrawer'
 import { useStoreAuth } from '../hooks/useStoreAuth'
+import { useTranslation } from '../hooks/useTranslation'
 import { getErrorMessage } from '../lib/errors'
 import { applySearchFilters, addSearchHistory, runSearch } from '../services/searchService'
 import { parseAiPrompt } from '../services/aiService'
@@ -22,6 +23,7 @@ interface NavState {
 /** 画面1: 検索画面（画面2 店舗詳細・画面3 ユーザ設定はこの画面内のオーバーレイとして実装） */
 export default function SearchPage() {
   const navigate = useNavigate()
+  const t = useTranslation()
   const location = useLocation()
   const navState = (location.state as NavState | null) ?? {}
   const { userId } = useStoreAuth()
@@ -44,7 +46,7 @@ export default function SearchPage() {
         const r = await runSearch(navState.q ?? '')
         if (!cancelled) setResults(r)
       } catch (err) {
-        if (!cancelled) setSearchError(getErrorMessage(err, '検索に失敗しました'))
+        if (!cancelled) setSearchError(getErrorMessage(err, t.errors.searchFailed))
       } finally {
         if (!cancelled) setSearching(false)
       }
@@ -64,7 +66,7 @@ export default function SearchPage() {
     try {
       setResults(await runSearch(text))
     } catch (err) {
-      setSearchError(getErrorMessage(err, '検索に失敗しました'))
+      setSearchError(getErrorMessage(err, t.errors.searchFailed))
     } finally {
       setSearching(false)
     }
@@ -80,7 +82,7 @@ export default function SearchPage() {
       setResults(await runSearch(aiQuery))
       setFilters({ ...emptyFilters, ...aiFilters })
     } catch (err) {
-      setSearchError(getErrorMessage(err, 'AI検索に失敗しました'))
+      setSearchError(getErrorMessage(err, t.errors.aiSearchFailed))
     } finally {
       setSearching(false)
     }
@@ -92,7 +94,7 @@ export default function SearchPage() {
     <div className="page page--search">
       <Logo />
       <header className="page-header">
-        <button type="button" className="icon-button" onClick={() => navigate('/')} aria-label="トップへ戻る">
+        <button type="button" className="icon-button" onClick={() => navigate('/')} aria-label={t.common.backToTop}>
           ←
         </button>
         <SearchBar defaultValue={queryText} onSubmit={handleSearch} />
@@ -100,7 +102,7 @@ export default function SearchPage() {
           type="button"
           className="icon-button"
           onClick={() => setSettingsOpen(true)}
-          aria-label="設定"
+          aria-label={t.common.settings}
         >
           ☰
         </button>
@@ -108,14 +110,14 @@ export default function SearchPage() {
 
       <div className="search-toolbar">
         <p className="search-toolbar__count">
-          {searching ? '検索中...' : `検索結果（${filteredResults.length}件）`}
+          {searching ? t.search.searching : t.search.resultCount(filteredResults.length)}
         </p>
         <button
           type="button"
           className="secondary-button"
           onClick={() => setFilterOpen((v) => !v)}
         >
-          {filterOpen ? 'フィルタを閉じる' : 'フィルタ'}
+          {filterOpen ? t.search.filterCloseButton : t.search.filterOpenButton}
         </button>
       </div>
 
@@ -130,7 +132,7 @@ export default function SearchPage() {
           </li>
         ))}
         {!searching && filteredResults.length === 0 && !searchError && (
-          <p className="empty-message">条件に一致する店舗が見つかりませんでした。</p>
+          <p className="empty-message">{t.search.noResults}</p>
         )}
       </ul>
 

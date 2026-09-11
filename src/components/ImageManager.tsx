@@ -1,4 +1,6 @@
 import { useEffect, useMemo } from 'react'
+import { useTranslation } from '../hooks/useTranslation'
+import type { Dictionary } from '../i18n'
 
 const MAX_IMAGES = 6
 
@@ -18,6 +20,7 @@ export default function ImageManager({
   onAddFiles,
   onRemovePending,
 }: ImageManagerProps) {
+  const t = useTranslation()
   const total = existingUrls.length + pendingFiles.length
   const canAddMore = total < MAX_IMAGES
 
@@ -31,7 +34,7 @@ export default function ImageManager({
               type="button"
               className="image-manager__remove"
               onClick={() => onRemoveExisting(url)}
-              aria-label="この画像を削除"
+              aria-label={t.common.removeImage}
             >
               ×
             </button>
@@ -43,12 +46,13 @@ export default function ImageManager({
             key={`${file.name}-${index}`}
             file={file}
             onRemove={() => onRemovePending(index)}
+            t={t}
           />
         ))}
 
         {canAddMore && (
           <label className="image-manager__add">
-            ＋
+            {t.imageManager.addButton}
             <input
               type="file"
               accept="image/*"
@@ -63,14 +67,20 @@ export default function ImageManager({
           </label>
         )}
       </div>
-      <p className="image-manager__hint">
-        {total}/{MAX_IMAGES}枚（保存を押すとアップロードされます）
-      </p>
+      <p className="image-manager__hint">{t.imageManager.hint(total, MAX_IMAGES)}</p>
     </div>
   )
 }
 
-function PendingImagePreview({ file, onRemove }: { file: File; onRemove: () => void }) {
+function PendingImagePreview({
+  file,
+  onRemove,
+  t,
+}: {
+  file: File
+  onRemove: () => void
+  t: Dictionary
+}) {
   // createObjectURLはfileが同じ限り決定的なので、レンダー中に計算しstateには持たない。
   // 後始末（revoke）だけをeffectで行う（react-hooks/set-state-in-effect対策）。
   const previewUrl = useMemo(() => URL.createObjectURL(file), [file])
@@ -86,7 +96,7 @@ function PendingImagePreview({ file, onRemove }: { file: File; onRemove: () => v
         type="button"
         className="image-manager__remove"
         onClick={onRemove}
-        aria-label="この画像を削除"
+        aria-label={t.common.removeImage}
       >
         ×
       </button>

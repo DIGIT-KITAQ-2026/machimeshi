@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { useTranslation } from '../hooks/useTranslation'
 
 export interface SelectOption<T extends string> {
   value: T
@@ -22,9 +23,10 @@ export default function Select<T extends string>({
   value,
   options,
   onChange,
-  placeholder = '選択してください',
+  placeholder,
   ariaLabel,
 }: SelectProps<T>) {
+  const t = useTranslation()
   const [open, setOpen] = useState(false)
   const rootRef = useRef<HTMLDivElement>(null)
 
@@ -52,7 +54,7 @@ export default function Select<T extends string>({
         aria-label={ariaLabel}
       >
         <span className={selected ? '' : 'select__placeholder'}>
-          {selected ? selected.label : placeholder}
+          {selected ? selected.label : (placeholder ?? t.common.selectPlaceholder)}
         </span>
         <span className={`select__arrow ${open ? 'select__arrow--open' : ''}`} aria-hidden="true">
           ▾

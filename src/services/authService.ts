@@ -8,6 +8,7 @@
 // 新規auth.usersの作成時に自動生成するため、ここではstore_idの読み取り・更新のみ扱う。
 
 import { supabase } from '../lib/supabaseClient'
+import { getDictionary } from '../i18n'
 import { createStore } from './storeService'
 
 /** 一般ユーザー用の匿名セッションを取得（無ければ発行）する。既存セッションがあればそれを使う。 */
@@ -19,7 +20,7 @@ export async function ensureAnonymousUser(): Promise<string> {
 
   const { data, error } = await supabase.auth.signInAnonymously()
   if (error) throw error
-  if (!data.user) throw new Error('匿名サインインに失敗しました')
+  if (!data.user) throw new Error(getDictionary().errors.anonymousSignInFailed)
   return data.user.id
 }
 
@@ -38,14 +39,14 @@ export async function getStoreIdForUser(userId: string): Promise<string | null> 
 export async function signInStore(email: string, password: string): Promise<string> {
   const { data, error } = await supabase.auth.signInWithPassword({ email, password })
   if (error || !data.user) {
-    throw new Error('メールアドレスまたはパスワードが正しくありません')
+    throw new Error(getDictionary().errors.invalidCredentials)
   }
 
   const storeId = await getStoreIdForUser(data.user.id)
   if (!storeId) {
     // 店舗に紐付いていないアカウント（店舗登録者ではない）。ログイン状態を残さない。
     await supabase.auth.signOut()
-    throw new Error('この操作は店舗アカウントのみ利用できます')
+    throw new Error(getDictionary().errors.storeAccountOnly)
   }
   return storeId
 }
@@ -59,19 +60,15 @@ export async function registerStore(
   const { data, error } = await supabase.auth.signUp({ email, password })
   if (error) {
     if (error.message.toLowerCase().includes('already registered')) {
-      throw new Error('このメールアドレスは既に登録されています')
+      throw new Error(getDictionary().errors.emailAlreadyRegistered)
     }
     throw new Error(error.message)
   }
-  if (!data.user) throw new Error('登録に失敗しました')
+  if (!data.user) throw new Error(getDictionary().errors.registrationFailed)
 
   if (!data.session) {
     // メール確認が有効なプロジェクト設定の場合、ここではまだ認証済みセッションが無い。
-    throw new Error(
-      '確認メールを送信しました。メール内のリンクを開いてからログインしてください' +
-        '（開発中はSupabaseダッシュボードのAuthentication > Sign In / Providers > Emailで' +
-        'Confirm emailをオフにすると省略できます）。',
-    )
+    throw new Error(getDictionary().errors.confirmEmailSent)
   }
 
   const store = await createStore(storeName)

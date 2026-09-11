@@ -6,6 +6,7 @@ import AiSearchBox from '../components/AiSearchBox'
 import RecommendationList from '../components/RecommendationList'
 import UserSettingsDrawer from '../components/UserSettingsDrawer'
 import { useStoreAuth } from '../hooks/useStoreAuth'
+import { useTranslation } from '../hooks/useTranslation'
 import { getErrorMessage } from '../lib/errors'
 import { addSearchHistory, getSearchHistory } from '../services/searchService'
 import { getAiRecommendations, getRecommendations, parseAiPrompt } from '../services/aiService'
@@ -14,6 +15,7 @@ import type { SearchFilters } from '../types'
 /** 画面0: トップ画面 */
 export default function TopPage() {
   const navigate = useNavigate()
+  const t = useTranslation()
   const { userId } = useStoreAuth()
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [aiSearching, setAiSearching] = useState(false)
@@ -53,7 +55,7 @@ export default function TopPage() {
       const { queryText, filters } = await parseAiPrompt(prompt)
       goSearch(queryText, filters)
     } catch (err) {
-      setAiError(getErrorMessage(err, 'AI検索に失敗しました'))
+      setAiError(getErrorMessage(err, t.errors.aiSearchFailed))
       setAiSearching(false)
     }
     // 成功時はgoSearch()で画面遷移するため、setAiSearching(false)は呼ばない
@@ -69,14 +71,14 @@ export default function TopPage() {
           type="button"
           className="icon-button"
           onClick={() => setSettingsOpen(true)}
-          aria-label="設定"
+          aria-label={t.common.settings}
         >
           ☰
         </button>
       </header>
 
       <section className="section">
-        <h2 className="section__title">あなたへのおすすめ</h2>
+        <h2 className="section__title">{t.top.recommendTitle}</h2>
         <RecommendationList suggestions={recommendations} onSelect={(text) => goSearch(text)} />
       </section>
 
@@ -89,7 +91,7 @@ export default function TopPage() {
 
       <footer className="top-footer">
         <button type="button" className="store-link-button" onClick={() => navigate('/store/auth')}>
-          店舗の方はこちら
+          {t.top.storeLinkButton}
         </button>
       </footer>
 

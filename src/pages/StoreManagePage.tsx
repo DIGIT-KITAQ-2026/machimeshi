@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useStoreAuth } from '../hooks/useStoreAuth'
+import { useTranslation } from '../hooks/useTranslation'
 import { getErrorMessage } from '../lib/errors'
 import * as visitService from '../services/visitService'
 import SeatTypeToggle from '../components/SeatTypeToggle'
@@ -18,6 +19,7 @@ import type { IdGenerating, SeatType, Visit } from '../types'
  */
 export default function StoreManagePage() {
   const navigate = useNavigate()
+  const t = useTranslation()
   const { store, signOut } = useStoreAuth()
   const [menuOpen, setMenuOpen] = useState(false)
 
@@ -68,7 +70,7 @@ export default function StoreManagePage() {
     setEnterError('')
     const id = Number(groupId)
     if (!groupId || Number.isNaN(id)) {
-      setEnterError('グループIDを入力してください')
+      setEnterError(t.storeManage.groupIdRequired)
       return
     }
     try {
@@ -77,14 +79,14 @@ export default function StoreManagePage() {
       await refreshGroupId(store!.id, store!.idGenerating)
       await refreshActiveGroups(store!.id)
     } catch (err) {
-      setEnterError(getErrorMessage(err, '入店処理に失敗しました'))
+      setEnterError(getErrorMessage(err, t.errors.enterFailed))
     }
   }
 
   async function handleExit() {
     setExitError('')
     if (!selectedExitId) {
-      setExitError('退店するグループを選択してください')
+      setExitError(t.storeManage.exitGroupRequired)
       return
     }
     try {
@@ -92,7 +94,7 @@ export default function StoreManagePage() {
       setSelectedExitId(null)
       await refreshActiveGroups(store!.id)
     } catch (err) {
-      setExitError(getErrorMessage(err, '退店処理に失敗しました'))
+      setExitError(getErrorMessage(err, t.errors.exitFailed))
     }
   }
 
@@ -104,44 +106,44 @@ export default function StoreManagePage() {
           type="button"
           className="icon-button"
           onClick={() => setMenuOpen(true)}
-          aria-label="メニュー"
+          aria-label={t.storeManage.menuAria}
         >
           ☰
         </button>
       </header>
 
       <section className="section card">
-        <h2 className="section__title">入店</h2>
+        <h2 className="section__title">{t.storeManage.enter}</h2>
 
         <div className="form__field">
-          席状況
+          {t.storeManage.seatStatus}
           <SeatTypeToggle value={seatType} onChange={setSeatType} />
         </div>
 
         <div className="form__field">
-          人数
+          {t.storeManage.peopleCount}
           <PeopleCounter value={peopleCount} onChange={setPeopleCount} />
         </div>
 
         <div className="form__field">
-          グループID
+          {t.storeManage.groupId}
           <GroupIdField value={groupId} onChange={setGroupId} />
         </div>
 
         {enterError && <p className="form-error">{enterError}</p>}
 
         <button type="button" className="primary-button" onClick={handleEnter} disabled={loading}>
-          入店
+          {t.storeManage.enter}
         </button>
       </section>
 
       <section className="section card">
-        <h2 className="section__title">退店</h2>
+        <h2 className="section__title">{t.storeManage.exit}</h2>
 
         <div className="form__field">
-          グループID
+          {t.storeManage.groupId}
           {loading ? (
-            <p className="empty-message">読み込み中...</p>
+            <p className="empty-message">{t.common.loading}</p>
           ) : (
             <ActiveGroupList
               groups={activeGroups}
@@ -154,7 +156,7 @@ export default function StoreManagePage() {
         {exitError && <p className="form-error">{exitError}</p>}
 
         <button type="button" className="primary-button" onClick={handleExit} disabled={loading}>
-          退店
+          {t.storeManage.exit}
         </button>
       </section>
 

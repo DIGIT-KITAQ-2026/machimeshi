@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
+import { useTranslation } from '../hooks/useTranslation'
 
 interface SearchBarProps {
   defaultValue?: string
@@ -8,11 +9,8 @@ interface SearchBarProps {
 }
 
 /** 検索窓（画面0・画面1で共通利用） */
-export default function SearchBar({
-  defaultValue = '',
-  placeholder = '何か検索する',
-  onSubmit,
-}: SearchBarProps) {
+export default function SearchBar({ defaultValue = '', placeholder, onSubmit }: SearchBarProps) {
+  const t = useTranslation()
   const [value, setValue] = useState(defaultValue)
 
   function handleSubmit(e: FormEvent) {
@@ -29,13 +27,13 @@ export default function SearchBar({
       <input
         type="search"
         className="search-bar__input"
-        placeholder={placeholder}
+        placeholder={placeholder ?? t.searchBar.placeholder}
         value={value}
         onChange={(e) => setValue(e.target.value)}
-        aria-label="店舗を検索"
+        aria-label={t.searchBar.ariaLabel}
       />
       <button type="submit" className="search-bar__button">
-        検索
+        {t.searchBar.submit}
       </button>
     </form>
   )

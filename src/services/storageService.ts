@@ -5,6 +5,7 @@
 
 import { supabase } from '../lib/supabaseClient'
 import { resizeImageFile } from '../lib/imageResize'
+import { getDictionary } from '../i18n'
 
 const BUCKET = 'store-images'
 const PUBLIC_URL_MARKER = `/object/public/${BUCKET}/`
@@ -23,7 +24,7 @@ export async function uploadStoreImages(storeId: string, files: File[]): Promise
     const resized = await resizeImageFile(file)
     const path = buildObjectPath(storeId, resized)
     const { error } = await supabase.storage.from(BUCKET).upload(path, resized, { upsert: false })
-    if (error) throw new Error(`画像のアップロードに失敗しました（${file.name}）: ${error.message}`)
+    if (error) throw new Error(getDictionary().errors.imageUploadFailed(file.name, error.message))
     const { data } = supabase.storage.from(BUCKET).getPublicUrl(path)
     urls.push(data.publicUrl)
   }

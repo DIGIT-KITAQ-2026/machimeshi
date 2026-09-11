@@ -11,11 +11,14 @@ import * as authService from '../services/authService'
 import * as storeService from '../services/storeService'
 import { supabase } from '../lib/supabaseClient'
 import { getErrorMessage } from '../lib/errors'
+import { useTranslation } from '../hooks/useTranslation'
+import { getDictionary } from '../i18n'
 import { StoreAuthContext } from './storeAuthContextValue'
 import type { StoreAuthContextValue } from './storeAuthContextValue'
 import type { Store } from '../types'
 
 export function StoreAuthProvider({ children }: { children: ReactNode }) {
+  const t = useTranslation()
   const [userId, setUserId] = useState<string | null>(null)
   const [store, setStore] = useState<Store | null>(null)
   const [loading, setLoading] = useState(true)
@@ -47,7 +50,7 @@ export function StoreAuthProvider({ children }: { children: ReactNode }) {
       } catch (err) {
         if (!cancelled) {
           setBootError(
-            getErrorMessage(err, 'Supabaseへの接続に失敗しました'),
+            getErrorMessage(err, getDictionary().errors.supabaseConnectionFailed),
           )
         }
       } finally {
@@ -92,7 +95,7 @@ export function StoreAuthProvider({ children }: { children: ReactNode }) {
   if (loading) {
     return (
       <div className="page-status">
-        <p>読み込み中...</p>
+        <p>{t.common.loading}</p>
       </div>
     )
   }
@@ -100,11 +103,8 @@ export function StoreAuthProvider({ children }: { children: ReactNode }) {
   if (bootError) {
     return (
       <div className="page-status">
-        <p className="form-error">Supabaseへの接続に失敗しました: {bootError}</p>
-        <p className="form__hint">
-          .env の VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY を確認してください
-          （supabase/README.md参照）。
-        </p>
+        <p className="form-error">{t.storeAuthContext.connectionFailedPrefix(bootError)}</p>
+        <p className="form__hint">{t.storeAuthContext.envHint}</p>
       </div>
     )
   }

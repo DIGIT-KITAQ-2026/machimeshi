@@ -1,4 +1,7 @@
 import StoreThumbnail from './StoreThumbnail'
+import { useTranslation } from '../hooks/useTranslation'
+import { useUserSettings } from '../hooks/useUserSettings'
+import { translateGenre } from '../i18n'
 import type { StoreSearchResult } from '../types'
 
 interface StoreCardProps {
@@ -8,6 +11,8 @@ interface StoreCardProps {
 
 /** 検索結果リストの1行分（画面1）。タップで店舗詳細（画面2）を開く。 */
 export default function StoreCard({ result, onClick }: StoreCardProps) {
+  const t = useTranslation()
+  const { settings } = useUserSettings()
   const { store, waitMinutes } = result
 
   return (
@@ -23,7 +28,9 @@ export default function StoreCard({ result, onClick }: StoreCardProps) {
         <p className="store-card__hours">
           {store.openTime}〜{store.closeTime}
         </p>
-        <p className="store-card__genres">{store.genres.join(' / ')}</p>
+        <p className="store-card__genres">
+          {store.genres.map((g) => translateGenre(g, settings.language)).join(' / ')}
+        </p>
       </div>
       <StoreThumbnail
         storeImages={store.storeImages}
@@ -32,7 +39,7 @@ export default function StoreCard({ result, onClick }: StoreCardProps) {
       />
       <div className="store-card__wait">
         <span className="store-card__wait-number">{waitMinutes}</span>
-        <span className="store-card__wait-unit">分待ち</span>
+        <span className="store-card__wait-unit">{t.storeCard.waitUnit}</span>
       </div>
     </button>
   )

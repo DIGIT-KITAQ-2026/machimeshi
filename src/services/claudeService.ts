@@ -9,6 +9,8 @@
 //
 // 事前に別ターミナルで `npm run claude-server` を起動しておくこと。
 
+import { getDictionary } from '../i18n'
+
 /**
  * Claudeにプロンプト文字列を渡し、最終的な返答テキストを返す（ブラウザから呼び出し可能）。
  *
@@ -26,14 +28,11 @@ export async function askClaude(prompt: string): Promise<string> {
 
   if (!res.ok) {
     const message = data && typeof data.error === 'string' ? data.error : `HTTP ${res.status}`
-    throw new Error(
-      `Claudeへの問い合わせに失敗しました: ${message}` +
-        '（別ターミナルで npm run claude-server を起動していますか？）',
-    )
+    throw new Error(getDictionary().errors.claudeRequestFailed(message))
   }
 
   if (!data || typeof data.answer !== 'string') {
-    throw new Error('Claudeからの応答形式が不正です')
+    throw new Error(getDictionary().errors.claudeResponseInvalid)
   }
   return data.answer
 }

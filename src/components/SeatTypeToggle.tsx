@@ -1,3 +1,4 @@
+import { useTranslation } from '../hooks/useTranslation'
 import type { SeatType } from '../types'
 
 interface SeatTypeToggleProps {
@@ -7,6 +8,7 @@ interface SeatTypeToggleProps {
 
 /** 席種類（テーブル/カウンター）の選択（機能要件9・画面6） */
 export default function SeatTypeToggle({ value, onChange }: SeatTypeToggleProps) {
+  const t = useTranslation()
   return (
     <div className="segmented">
       <button
@@ -14,14 +16,14 @@ export default function SeatTypeToggle({ value, onChange }: SeatTypeToggleProps)
         className={`segmented__item ${value === 'table' ? 'segmented__item--active' : ''}`}
         onClick={() => onChange('table')}
       >
-        テーブル
+        {t.common.seatType.table}
       </button>
       <button
         type="button"
         className={`segmented__item ${value === 'counter' ? 'segmented__item--active' : ''}`}
         onClick={() => onChange('counter')}
       >
-        カウンター
+        {t.common.seatType.counter}
       </button>
     </div>
   )
