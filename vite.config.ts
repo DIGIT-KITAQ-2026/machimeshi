@@ -5,6 +5,9 @@ import { defineConfig } from 'vite'
 export default defineConfig({
   plugins: [react()],
   server: {
+    // 同じWi-Fi内の他端末（スマホ等）からアクセスできるようにする。
+    // 起動時に表示されるNetwork欄のURLをスマホのブラウザで開けばよい。
+    host: true,
     proxy: {
       // ブラウザからClaudeを呼び出すためのローカル専用APIサーバーへのプロキシ。
       // `npm run claude-server` を別途起動しておく必要がある（scripts/claudeServer.ts参照）。
