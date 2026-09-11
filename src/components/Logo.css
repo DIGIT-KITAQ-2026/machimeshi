@@ -10,9 +10,6 @@
 .logo-img {
   height: 40px;
   width: auto;
-  transition:
-    transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
-    filter 0.35s ease;
 }
 
 /* ライトテーマでは文字が濃い方のロゴを、ダークテーマでは白文字のロゴを表示する */
@@ -26,10 +23,4 @@
 
 :root[data-theme='dark'] .logo-img--dark {
   display: block;
-}
-
-.logo:hover .logo-img,
-.logo:focus-visible .logo-img {
-  transform: scale(1.08) rotate(-2deg);
-  filter: drop-shadow(0 6px 14px var(--accent-border));
 }
