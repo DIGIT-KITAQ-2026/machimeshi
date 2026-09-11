@@ -3,43 +3,33 @@
   width: 100%;
   align-items: center;
   justify-content: center;
-  gap: 10px;
   text-decoration: none;
   padding: 4px 0 2px;
-  transition: transform 0.15s;
 }
 
-.logo:hover {
-  transform: translateY(-1px);
-}
-
-.logo-mark {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
+.logo-img {
   height: 40px;
-  border-radius: 12px;
-  flex-shrink: 0;
-  background: linear-gradient(135deg, var(--accent), var(--accent-dark));
-  box-shadow:
-    0 6px 14px -4px var(--accent-border),
-    inset 0 1px 1px rgba(255, 255, 255, 0.4);
+  width: auto;
+  transition:
+    transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+    filter 0.35s ease;
 }
 
-.logo-text {
-  display: flex;
-  align-items: baseline;
-  font-family: 'M PLUS Rounded 1c', var(--sans);
-  font-size: 26px;
-  font-weight: 800;
-  letter-spacing: -0.02em;
+/* ライトテーマでは文字が濃い方のロゴを、ダークテーマでは白文字のロゴを表示する */
+.logo-img--dark {
+  display: none;
 }
 
-.logo-text-primary {
-  color: var(--text-h);
+:root[data-theme='dark'] .logo-img--light {
+  display: none;
 }
 
-.logo-text-accent {
-  color: var(--accent);
+:root[data-theme='dark'] .logo-img--dark {
+  display: block;
+}
+
+.logo:hover .logo-img,
+.logo:focus-visible .logo-img {
+  transform: scale(1.08) rotate(-2deg);
+  filter: drop-shadow(0 6px 14px var(--accent-border));
 }
