@@ -3,24 +3,33 @@
   width: 100%;
   align-items: center;
   justify-content: center;
+  gap: 8px;
   text-decoration: none;
   padding: 4px 0 2px;
 }
 
-.logo-img {
-  height: 40px;
-  width: auto;
+.logo-icon {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
 }
 
-/* ライトテーマでは文字が濃い方のロゴを、ダークテーマでは白文字のロゴを表示する */
-.logo-img--dark {
-  display: none;
+/* 文字部分は実テキスト（Web font）で描画し、どの端末でも同じフォントで表示されるようにする */
+.logo-wordmark {
+  display: inline-flex;
+  align-items: baseline;
+  font-family: 'M PLUS Rounded 1c', 'Zen Kaku Gothic New', sans-serif;
+  font-weight: 800;
+  font-size: 26px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
 }
 
-:root[data-theme='dark'] .logo-img--light {
-  display: none;
+.logo-wordmark__primary {
+  color: var(--text-h);
 }
 
-:root[data-theme='dark'] .logo-img--dark {
-  display: block;
+.logo-wordmark__accent {
+  color: #ff8566;
 }

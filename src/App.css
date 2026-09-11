@@ -272,6 +272,10 @@
 
 .search-bar {
   flex: 1 1 auto;
+  /* min-width:0が無いと、内容（検索窓＋ボタン）の最小幅がヘッダーの
+     利用可能幅を超えたときに縮まずあふれてしまう（戻るボタンがある画面1で
+     設定ボタンが画面右端からはみ出す不具合の原因だった） */
+  min-width: 0;
   display: flex;
   align-items: center;
   gap: 8px;
